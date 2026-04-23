@@ -21,10 +21,11 @@ namespace Simple_Notes
             RestClientOptions options = new RestClientOptions(baseURL)
             {
                 Authenticator = new JwtAuthenticator(jwtToken)
+
             };
             client = new RestClient(options);
         }
-
+                
         private string GetJwtToken(string email, string password)
         {
             RestClient authClient = new RestClient(baseURL);
@@ -41,7 +42,7 @@ namespace Simple_Notes
                 {
                     throw new InvalidOperationException("Token not found in the response.");
                 }
-                    return token;
+                return token;
             }
 
             else
@@ -66,7 +67,7 @@ namespace Simple_Notes
                 $"Expected 400 BadRequest but got {(int)response.StatusCode}. Response: {response.Content}");
         }
 
-        [Order (2)]
+        [Order(2)]
         [Test]
         public void CreateNote_WithRequiredFields_ShouldSuccess()
         {
@@ -89,10 +90,9 @@ namespace Simple_Notes
             ApiResponseDto readyResponse = JsonSerializer.Deserialize<ApiResponseDto>(response.Content);
 
             Assert.That(readyResponse.Msg, Is.EqualTo("Note created successfully!"));
-
         }
 
-        [Order (3)]
+        [Order(3)]
         [Test]
         public void GetAllNotes_ShouldReturnNotEmptyList()
         {
@@ -101,7 +101,7 @@ namespace Simple_Notes
             RestResponse response = client.Execute(request);
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            
+
             var notes = JsonSerializer.Deserialize<List<NoteDto>>(
                JsonDocument.Parse(response.Content).RootElement.GetProperty("allNotes").GetRawText()
             );
@@ -116,7 +116,7 @@ namespace Simple_Notes
             Assert.That(noteId, Is.Not.Null.And.Not.Empty);
         }
 
-        [Order (4)]
+        [Order(4)]
         [Test]
         public void EditNote_WithValidData_ShouldSuccess()
         {
@@ -143,7 +143,7 @@ namespace Simple_Notes
             Assert.That(readyResponse.Msg, Is.EqualTo("Note edited successfully!"));
         }
 
-        [Order (5)]
+        [Order(5)]
         [Test]
         public void DeleteExistingNote_ShouldSuccess()
         {
@@ -161,11 +161,11 @@ namespace Simple_Notes
             Assert.That(readyResponse.Msg, Is.EqualTo("Note deleted successfully!"));
         }
 
-        [OneTimeTearDown] 
+        [OneTimeTearDown]
         public void TearDown()
         {
             this.client?.Dispose();
         }
     }
-    
+
 }
